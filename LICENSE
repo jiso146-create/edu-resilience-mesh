@@ -1,21 +1,57 @@
 MIT License
 
-Copyright (c) 2026 [磯山　純/武術創造　DIY・AI研究所]
+Copyright (c) 2026 磯山　純 / 武術創造　DIY・AI研究所
 
-以下に定める条件に従い、本ソフトウェア、回路図、教育用カリキュラム・マニュアル、
-および関連するすべての文書ファイル（以下「本成果物」という）の複製を取得する
-すべての人に対し、本成果物を無制限に扱うことを無償で許諾します。
-これには、本成果物を使用、複製、変更、結合、掲載、頒布、サブライセンス、
-および/または販売する権利、および本成果物を提供する相手にそれを許可する権利が
-含まれます。
+This project is licensed under the MIT License.
+The English text below is the legally governing version.
+A Japanese reference translation follows for convenience only.
 
-上記の著作権表示および本許諾表示は、本成果物のすべての複製または重要な部分に
-記載するものとします。
+-------------------------------------------------------------------------------
+MIT License (governing version)
+-------------------------------------------------------------------------------
 
-本成果物は「現状のまま」提供され、明示または黙示を問わず、商品性、特定の目的に
-対する適合性、および権利非侵害の保証を含むがこれらに限定されない、いかなる種類の
-保証もつけられません。
-著作権者またはライセンス保持者は、契約行為、不法行為、またはそれ以外であろうと、
-本成果物に起因または関連し、あるいは本成果物の使用またはその他の取り扱いから
-生じるいかねる請求、損害、またはその他の責任に対しても、一切の責任を負わないもの
-とします。（完全免責）
+Copyright (c) 2026 磯山　純 / 武術創造　DIY・AI研究所
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+参考日本語訳 (reference translation, not legally binding)
+本訳は理解のための参考であり、法的効力を持つのは上記の英語原文です。
+-------------------------------------------------------------------------------
+
+MIT ライセンス
+
+Copyright (c) 2026 磯山　純 / 武術創造　DIY・AI研究所
+
+以下に定める条件に従い、本ソフトウェアおよび関連する文書ファイル
+（以下「本ソフトウェア」という）の複製を取得するすべての人に対し、
+本ソフトウェアを無制限に扱うことを無償で許諾します。これには、本ソフトウェアを
+使用、複製、変更、結合、掲載、頒布、サブライセンス、および/または販売する権利、
+および本ソフトウェアを提供する相手に同じことを許可する権利が含まれ、これらの
+権利は下記の条件に従うものとします。
+
+上記の著作権表示および本許諾表示は、本ソフトウェアのすべての複製または重要な
+部分に記載するものとします。
+
+本ソフトウェアは「現状のまま」提供され、明示または黙示を問わず、商品性、特定の
+目的への適合性、および権利非侵害の保証を含むがこれらに限定されない、いかなる
+種類の保証もありません。著作権者またはライセンス保持者は、契約行為、不法行為、
+またはそれ以外であろうと、本ソフトウェアに起因または関連し、あるいは本
+ソフトウェアの使用もしくはその他の取り扱いから生じる、いかなる請求、損害、
+その他の責任に対しても、一切の責任を負いません。
