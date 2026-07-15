@@ -38,34 +38,40 @@ Most of the time, this system detects nothing — and that is correct. The chall
 **2. Subtraction, not addition — decide what NOT to protect.**
 Trying to protect everything makes a device expensive and fragile. We do not measure continuous depth. We detect only two thresholds by the physical height of two electrodes: **5 cm (caution)** and **15 cm (danger)**. Beyond that, the device itself goes underwater and stops responding — and we treat that **silence (LOST) as the strongest danger signal of all (black).** A sensor going quiet becomes its final, most eloquent message.
 
-**3. Sleep by default, wake on water.**
+**3. Fail-safe by design — silence is the alarm (normally-closed thinking).**
+Most flood sensors are built "normally-open": they stay silent and speak only when water arrives. But that silence cannot tell "safe" apart from "broken." We invert this. Our nodes send a *proof-of-life* heartbeat during normal times (a "normally-closed" mindset), and treat its **absence — the silence itself — as the highest alarm.** Even when a device is submerged and stops working, its death becomes the information: "the water has exceeded the danger level here." This is exactly why the hardware is *allowed* to drown (IP56-class housing is enough) and we spend nothing on excessive waterproofing. When it fails, it fails toward the alarm side — the same fail-safe philosophy used in railway signaling and elevator safety circuits. The opposite — a sensor that dies quietly and no one notices until the next flood — is what we refuse to build.
+
+**4. Sleep by default, wake on water.**
 The electrodes carry no current in normal conditions. The microcontroller wakes only to send a **heartbeat every 2 hours**, then sleeps. This interval balances energy savings, speed of LOST detection, and network congestion.
 
-**4. Two-tier monitoring escalation.**
+**5. Two-tier monitoring escalation.**
 A node reaching **5 cm autonomously switches to ~10-minute reporting** (local escalation). The central backend can also push an **"increase frequency" command to all nodes at once** ahead of a forecast storm (central escalation). *Honest limitation:* because nodes sleep to save power, a pushed command may be delayed by up to one heartbeat interval. This responsiveness-vs-power tradeoff is a problem we are still working on.
 
-**5. Kill the recurring communication cost by design.**
-Instead of cellular (LPWA / LTE) links with yearly fees, nodes relay to each other over **Thread (IPv6-based self-healing mesh)**, and a border-router parent bridges to **existing Wi-Fi** at a school or community hall. The backend runs on the **free tier of Google Apps Script**. This drives the *ongoing* operating cost close to zero. If one node is lost, neighbors automatically rebuild an alternate route.
+**6. Kill the recurring communication cost by design.**
+Instead of cellular (LPWA / LTE) links with yearly fees on every unit, nodes relay to each other over **Thread (IPv6-based self-healing mesh)**, and a border-router parent bridges to existing infrastructure. Many children are bundled under a single parent, so only the *parent* needs an uplink — driving the *ongoing* operating cost close to zero. The parent bridges via **existing Wi-Fi** (school, community hall) where available, or **LTE-M** where it is not. If one node is lost, neighbors automatically rebuild an alternate route.
 
-**6. Optimize for your land — power that matches the climate.**
-Power comes only from a small solar panel and a supercapacitor (EDLC) — no chemical batteries, no leakage or fire risk, very long cycle life, tolerant of heat and cold. This depends on sunlight. Our own prototype is tuned for a sunny, low-rainfall-variance region (we developed it in Okayama, a part of Japan known as the "Land of Sunshine"). **That is exactly the point: the optimal engineering answer changes with your environment.** In a monsoon climate with long overcast rains — or anywhere with different sunlight, terrain, or infrastructure — the power design must be rethought. This open source exists so you can retune it for your own land.
+**7. Put the parent on existing infrastructure.**
+Child nodes are scattered where there is no power and no network, so they run autonomously on solar + supercapacitor. Parents are few, so instead of making them self-powered too, we place them where power already exists: **pump stations, utility poles, vending machines, community halls.** Choosing a resilient host (e.g. a pump station with backup power) also buys the parent's blackout tolerance for free. *Deployment note:* using such infrastructure requires permission from its manager (road authority, utility, water/sewer division).
 
-**7. The microcontroller is disposable; the standard is the asset.**
+**8. Optimize for your land — power that matches the climate.**
+Power comes only from a small solar panel and a supercapacitor (EDLC) — no chemical batteries, no leakage or fire risk, very long cycle life, tolerant of heat and cold. This depends on sunlight. Our own prototype is tuned for a sunny, low-rainfall-variance region (developed in Okayama, a part of Japan known as the "Land of Sunshine"). **That is exactly the point: the optimal engineering answer changes with your environment.** In a monsoon climate with long overcast rains — or anywhere with different sunlight, terrain, or infrastructure — the power design must be rethought. This open source exists so you can retune it for your own land.
+
+**9. The microcontroller is disposable; the standard is the asset.**
 By building on the industry-standard **Thread / IEEE 802.15.4**, a better chip in the future can replace the nodes while the network stays intact. Open source and open standards protect this "freedom to migrate."
 
 ## Architecture
 
 ```
-[ Each gutter / school route — child node ]
+[ Each gutter / underpass / school route — child node ]
   Solar panel -> Supercapacitor (EDLC) -> Buck-Boost charge management
         |
         v
   ESP32-C6 (Thread) + electrode water detection (5 cm / 15 cm)
         |
         v  autonomous mesh relay, ~100-200 m spacing
-[ node ] -> [ node ] -> ... -> [ School / community hall = Border Router ]
+[ node ] -> [ node ] -> ... -> [ Parent = Border Router on existing infra ]
         |
-        v  existing Wi-Fi
+        v  existing Wi-Fi  (or LTE-M where no Wi-Fi)
   Google Apps Script (backend + API)
         |
    +----+---------------------------+
@@ -77,7 +83,7 @@ Status colors: **blue** (normal) / **yellow** (5 cm) / **red** (15 cm) / **black
 
 ## Who might find this useful
 
-We believe this design is most valuable not where money is abundant, but where it is scarce — regions facing recurring floods without the budget to sustain expensive monitoring. If you are a researcher, an NGO, a teacher, or a community maker working on **low-cost flood early warning**, please take this, break it, and rebuild it for your own conditions. That is what it is for.
+We believe this design is most valuable not where money is abundant, but where it is scarce — regions facing recurring floods without the budget to sustain expensive monitoring. Underpasses, where vehicles drown every year, are a particularly strong use case. If you are a researcher, an NGO, a teacher, or a community maker working on **low-cost flood early warning**, please take this, break it, and rebuild it for your own conditions. That is what it is for.
 
 ## Relationship to existing efforts
 
@@ -117,34 +123,40 @@ All materials in this repository — software, firmware, circuit schematics, and
 **2. 足し算ではなく引き算 ― 守らないものを決める。**
 すべてを守ろうとすると、高価で壊れやすくなります。水位は連続値では測らず、二本の電極の高さの差で **5cm(注意)** と **15cm(危険)** の二段階だけを検知します。それを超える冠水では、デバイス自身が水没して応答を止めます。私たちはこの**「応答なし(ロスト)」という状態そのものを、最大の危険信号(黒)として扱います。** センサが黙ることが、最後の、そして最も雄弁な通信になります。
 
-**3. 普段は寝て、水が来たら起きる。**
+**3. フェイルセーフ設計 ― 沈黙を警報とする(B接点思考)。**
+多くの浸水センサは「水が来たら知らせる」設計(A接点/常開)で、平常時は沈黙します。しかしこの沈黙は「安全」と「故障」を区別できません。本システムはこれを逆転させます。平常時こそ**生存信号(ハートビート)を送り続け**(B接点/常閉の発想)、その**途絶——沈黙そのもの——を最大の警報として扱います。** デバイスが水没して機能を止めても、その死そのものが「ここは危険水位を超えた」という情報になります。だからこそ本機は**水没して構わない設計**であり(IP56相当で十分)、防水に過剰なコストをかけません。壊れたら危険側ではなく安全側=「警報側」に倒れる——鉄道信号やエレベーター安全回路と同じフェイルセーフ思想です。私たちが作りたくないのはその逆、すなわち「静かに壊れ、次の洪水まで誰も気づかないセンサ」です。
+
+**4. 普段は寝て、水が来たら起きる。**
 電極は平常時には通電せず、消費電力はほぼゼロです。マイコンは **2時間おきにハートビート(生存確認)** だけを送り、また眠ります。この間隔は、電力の節約・ロスト検知の速さ・通信の混雑という三つのバランスで決めました。
 
-**4. 二段構えの監視モード。**
+**5. 二段構えの監視モード。**
 **5cm に達した子機は、自ら観測間隔を約10分に切り替えます**(自律格上げ)。さらに、大雨の予報などに応じて、中央のサーバから **全子機へ「観測頻度を上げよ」という指令を一斉に下ろす**こともできます(中央格上げ)。*正直な限界:* 省電力のため子機が眠っている間は、指令の反映に最大でハートビート間隔ぶんの遅れが生じます。この「即応性と省電力のトレードオフ」は、私たちが今も向き合っている課題です。
 
-**5. 通信のランニングコストを「構造」で消す。**
-毎年課金される携帯回線(LPWA / LTE)を使わず、子機どうしが **Thread(IPv6ベースの自己修復メッシュ)** で中継し合い、親機(Border Router)が学校や公民館の **既存 Wi-Fi** に接続します。バックエンドは **Google Apps Script の無料枠**を使います。こうして運用の維持費を構造的にほぼゼロにしました。1台が失われても、周囲の子機が別の中継ルートを自動で組み直します。
+**6. 通信のランニングコストを「構造」で消す。**
+1台ごとに毎年課金される携帯回線(LPWA / LTE)を使わず、子機どうしが **Thread(IPv6ベースの自己修復メッシュ)** で中継し合い、親機(Border Router)が既存インフラへ橋渡しします。多数の子機を1台の親機で束ねるため、外部回線が必要なのは**親機だけ**——これで運用の維持費を構造的にほぼゼロにします。親機は、利用できる場所では **既存Wi-Fi**(学校・公民館)を、無い場所では **LTE-M** を使います。1台が失われても、周囲の子機が別の中継ルートを自動で組み直します。
 
-**6. 土地に合わせて最適化する ― 気候に合った電源を。**
+**7. 親機は既存インフラに相乗りさせる。**
+子機は電気もネットもない場所に散らばるため、ソーラー+スーパーキャパシタで自律動作します。一方、親機は数が少ないので、これも自律させるのではなく、**すでに電気が来ている場所——ポンプ場、電柱、自販機、公民館——に相乗りさせます。** 非常用電源を備えた拠点(例:ポンプ場)を選べば、親機の停電耐性まで拠点側から借りられます。*設置上の注意:* こうしたインフラの利用には、その管理者(道路管理者・電力会社・上下水道部局等)の許可が必要です。
+
+**8. 土地に合わせて最適化する ― 気候に合った電源を。**
 電源は小型の太陽光パネルとスーパーキャパシタ(EDLC)のみ。化学電池を使わないため液漏れ・発火のリスクがなく、超高サイクル寿命で、高温・低温にも強い構成です。これは日照に依存します。私たち自身の試作機は、日照が多く天候の振れが小さい地域に合わせて調整しています(開発地は「晴れの国」として知られる岡山です)。**ここが肝心です。最適な工学的答えは、その土地の環境で変わります。** 連日曇天の雨が続くモンスーン気候、あるいは日照・地形・インフラの異なるあらゆる土地では、電源設計を見直す必要があります。このオープンソースは、あなたが自分の土地に合わせて調整し直せるように存在します。
 
-**7. マイコンは消耗品、規格は資産。**
+**9. マイコンは消耗品、規格は資産。**
 業界標準の **Thread / IEEE 802.15.4** の上に築いたことで、将来より優れたチップが出れば、ネットワークはそのままに子機だけを載せ替えられます。オープンソースと標準規格は、この「未来への乗り換え可能性」を守るためにあります。
 
 ## システム構成
 
 ```
-[ 各側溝・通学路 — 子機 ]
+[ 各側溝・アンダーパス・通学路 — 子機 ]
   太陽光パネル -> スーパーキャパシタ(EDLC) -> 昇降圧・充放電管理
         |
         v
   ESP32-C6 (Thread) + 電極による水位検知 (5cm / 15cm)
         |
         v  100〜200m間隔の自律メッシュリレー
-[ 子機 ] -> [ 子機 ] -> ... -> [ 学校・公民館 = Border Router ]
+[ 子機 ] -> [ 子機 ] -> ... -> [ 親機 = 既存インフラ上の Border Router ]
         |
-        v  既存Wi-Fi
+        v  既存Wi-Fi (無ければ LTE-M)
   Google Apps Script (バックエンド + API)
         |
    +----+---------------------------+
@@ -156,7 +168,7 @@ All materials in this repository — software, firmware, circuit schematics, and
 
 ## 誰の役に立つか
 
-この設計が最も価値を持つのは、お金が潤沢な場所ではなく、乏しい場所——高価な監視を維持する予算がないまま、毎年洪水に直面する地域だと私たちは考えています。**低コストの洪水早期警報**に取り組む研究者、NGO、教員、地域の作り手の方は、どうかこれを持っていき、壊し、自分の土地の条件に合わせて作り直してください。そのためのオープンソースです。
+この設計が最も価値を持つのは、お金が潤沢な場所ではなく、乏しい場所——高価な監視を維持する予算がないまま、毎年洪水に直面する地域だと私たちは考えています。毎年車両の水没事故が起きるアンダーパスは、特に有力な用途です。**低コストの洪水早期警報**に取り組む研究者、NGO、教員、地域の作り手の方は、どうかこれを持っていき、壊し、自分の土地の条件に合わせて作り直してください。そのためのオープンソースです。
 
 ## 既存の取り組みとの関係
 
